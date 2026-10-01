@@ -1,0 +1,17 @@
+.o
+scripts/*.txt
+syn/altera/.qsys_edit/
+syn/altera/*.txt
+syn/altera/ccd_qsys.sopcinfo
+syn/altera/ccd_qsys/
+syn/altera/db/
+syn/altera/incremental_db/
+syn/altera/output_files/
+syn/altera/software/ccd/mem_init/
+syn/altera/software/ccd/obj/
+syn/altera/software/ccd_bsp/obj/
+syn/altera/sysclk_control.sopcinfo
+syn/altera/sysclk_control/
+syn/altera/software/RemoteSystemsTempFiles/
+*.elf
+*.map

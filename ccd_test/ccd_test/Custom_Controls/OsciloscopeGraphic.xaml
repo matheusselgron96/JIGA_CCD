@@ -1,0 +1,33 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ccd_test"
+             x:Class="ccd_test.OsciloscopeGraphic"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="740" Loaded="UserControl_Loaded">
+	<Grid x:Name="gdMain">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="gdMainGraph" Grid.Row="1">
+
+            <Grid x:Name="gdChartArea" Margin="40,5,5,30">
+                <Border x:Name="brdChart" BorderThickness="1" BorderBrush="{StaticResource StrongColor}"/>
+                <Canvas x:Name="cnvChart">
+                    <local:ButtonIcon
+                        IconGeometry="{StaticResource cog}"
+                        IconColor="{StaticResource StrongColor}"
+                        Canvas.Top="5"
+                        Canvas.Right="5"
+                        ImageMargin="8"
+                        Visibility="Hidden"
+                        x:Name="btConfig"
+                        Click="btConfig_Click"/>
+                </Canvas>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

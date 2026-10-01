@@ -1,0 +1,69 @@
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (11:04:59 -- 12/12/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000011
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (11:08:09 -- 12/12/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000000
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (11:09:16 -- 12/12/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000000
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LEDS = Ok!
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (11:13:00 -- 12/12/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 11111111
+**********************************TESTES***************************************
+TESTE LEDS = Ok!
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (11:15:34 -- 12/12/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (11:16:50 -- 12/12/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (11:39:22 -- 12/12/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 11100001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM

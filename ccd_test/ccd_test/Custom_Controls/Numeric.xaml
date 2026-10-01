@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="ccd_test.Numeric"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ccd_test"
+             mc:Ignorable="d"
+             MinWidth="10" MinHeight="10"
+             d:DesignHeight="250" d:DesignWidth="500"
+             SizeChanged="UserControl_SizeChanged">
+	<Border CornerRadius="10" BorderBrush="Red" x:Name="brdMain"
+            Background="{StaticResource Level1Background}">
+		<Grid x:Name="gdMain">
+			<!--The Value itself-->
+			<Label x:Name="lbValue"
+                   Grid.RowSpan="2" 
+                   VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                   VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                   TargetUpdated="lbValue_TargetUpdated"
+                   MouseLeftButtonDown="lbValue_MouseLeftButtonDown">
+                <TextBlock>
+                        <Run Name="TextValue" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Numeric}}, Path=Value, NotifyOnTargetUpdated=True}"/>
+                        <Run Name="TextCustomUnit" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Numeric}}, Path=CustomUnit}"/>
+                </TextBlock>
+            </Label>
+		</Grid>
+	</Border>
+</UserControl>

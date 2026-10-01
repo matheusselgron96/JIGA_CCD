@@ -1,0 +1,18 @@
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (08:52:14 -- 06/19/2025)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+TESTE SRAM = Escrita de dados na SRAM Finalizada
+TESTE SRAM = Iniciando Leitura de dados na SRAM
+TESTE SRAM = Leitura de dados na SRAM concluída
+TESTE SRAM = Iniciando Limpeza de dados na SRAM
+TESTE SRAM = Limpeza de dados na SRAM concluída
+TESTE SRAM = Leitura de dados na SRAM em branco
+TESTE SRAM = Leitura de dados na SRAM em branco concluída
+TESTE SRAM = Finalizado

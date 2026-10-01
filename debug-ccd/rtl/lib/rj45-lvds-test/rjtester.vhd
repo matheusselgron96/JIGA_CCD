@@ -1,0 +1,370 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity rjtester is
+  generic (
+    PERIOD_SYNC_US       : integer := 100;
+    LINK_0_FREQUENCY_MHZ : integer := 50;
+    LINK_0_NUM_BYTES     : integer := 500;
+    LINK_2_FREQUENCY_MHZ : integer := 20;
+    LINK_2_NUM_BYTES     : integer := 80
+    );
+  port (
+    rst_n : in std_logic;
+
+    -- avmm
+    sysclk         : in  std_logic;
+    avmm_address   : in  std_logic_vector(3 downto 0);
+    avmm_write     : in  std_logic;
+    avmm_writedata : in  std_logic_vector(31 downto 0);
+    avmm_read      : in  std_logic;
+    avmm_readdata  : out std_logic_vector(31 downto 0);
+
+    -- Serial Pair 0
+    clk0_0       : in  std_logic;       -- clock from pll 0 degrees
+    clk0_90      : in  std_logic;       -- clock from pll 90 degrees
+    tx0_serial_o : out std_logic;       -- rj45A_connector tx0
+    rx0_serial_i : in  std_logic;       -- rj45B_connector rx0
+    -- Serial Pair 1
+    tx1_serial_o : out std_logic;       -- rj45B_connector tx1
+    rx1_serial_i : in  std_logic;       -- rj45A_connector rx1
+    -- Serial Pair 2
+    clk2_0       : in  std_logic;       -- clock from pll 0 degrees
+    clk2_90      : in  std_logic;       -- clock from pll 90 degrees
+    tx2_serial_o : out std_logic;       -- rj45A_connector tx2
+    rx2_serial_i : in  std_logic        -- rj45B_connector rx2
+    );
+
+end entity rjtester;
+
+architecture serdes_rtl of rjtester is
+
+  constant LINK_1_FREQUENCY_MHZ : integer := LINK_0_FREQUENCY_MHZ;
+  constant LINK_1_NUM_BYTES     : integer := LINK_0_NUM_BYTES;
+
+  -- component generics
+  constant LINK_0_N_CYCLES : integer := PERIOD_SYNC_US * LINK_0_FREQUENCY_MHZ;
+  constant LINK_1_N_CYCLES : integer := PERIOD_SYNC_US * LINK_1_FREQUENCY_MHZ;
+  constant LINK_2_N_CYCLES : integer := PERIOD_SYNC_US * LINK_1_FREQUENCY_MHZ;
+
+  -- component ports
+  signal tx0_avst_valid_int : std_logic;
+  signal tx0_avst_ready_int : std_logic;
+  signal tx0_avst_sop_int   : std_logic;
+  signal tx0_avst_eop_int   : std_logic;
+  signal tx0_avst_data_int  : std_logic_vector(7 downto 0);
+
+  signal rx0_status_int     : std_logic;
+  signal rx0_avst_valid_int : std_logic;
+  signal rx0_avst_ready_int : std_logic;
+  signal rx0_avst_sop_int   : std_logic;
+  signal rx0_avst_eop_int   : std_logic;
+  signal rx0_avst_data_int  : std_logic_vector(7 downto 0);
+  signal rx0_sync_int       : std_logic;
+
+  signal tx1_avst_valid_int : std_logic;
+  signal tx1_avst_ready_int : std_logic;
+  signal tx1_avst_sop_int   : std_logic;
+  signal tx1_avst_eop_int   : std_logic;
+  signal tx1_avst_data_int  : std_logic_vector(7 downto 0);
+
+  signal rx1_status_int     : std_logic;
+  signal rx1_avst_valid_int : std_logic;
+  signal rx1_avst_ready_int : std_logic;
+  signal rx1_avst_sop_int   : std_logic;
+  signal rx1_avst_eop_int   : std_logic;
+  signal rx1_avst_data_int  : std_logic_vector(7 downto 0);
+  signal rx1_sync_int       : std_logic;
+
+  signal tx2_avst_valid_int : std_logic;
+  signal tx2_avst_ready_int : std_logic;
+  signal tx2_avst_sop_int   : std_logic;
+  signal tx2_avst_eop_int   : std_logic;
+  signal tx2_avst_data_int  : std_logic_vector(7 downto 0);
+
+  signal rx2_status_int     : std_logic;
+  signal rx2_avst_valid_int : std_logic;
+  signal rx2_avst_ready_int : std_logic;
+  signal rx2_avst_sop_int   : std_logic;
+  signal rx2_avst_eop_int   : std_logic;
+  signal rx2_avst_data_int  : std_logic_vector(7 downto 0);
+  signal rx2_sync_int       : std_logic;
+
+  signal tx0_enable_next, tx0_enable_reg       : std_logic := '0';
+  signal tx1_enable_next, tx1_enable_reg       : std_logic := '0';
+  signal tx2_enable_next, tx2_enable_reg       : std_logic := '0';
+  signal avmm_readdata_next, avmm_readdata_reg : std_logic_vector(avmm_readdata'range);
+
+  -- CDC using 1 register because all the clocks comes from the same source
+  -- So quartus will be able to ensure we aren't going to have meta stability
+  -- An additional register is required to make it easier meet the timming
+  signal tx0_enable_clk0_reg   : std_logic := '0';
+  signal tx1_enable_clk1_reg   : std_logic := '0';
+  signal tx2_enable_clk2_reg   : std_logic := '0';
+  signal rx0_status_sysclk_reg : std_logic;
+  signal rx1_status_sysclk_reg : std_logic;
+  signal rx2_status_sysclk_reg : std_logic;
+
+  -- link 1 will use the same clock as link 0
+  signal clk1_0  : std_logic;           -- clock from pll 0 degrees
+  signal clk1_90 : std_logic;           -- clock from pll 90 degrees
+
+begin
+
+  clk1_0  <= clk0_0;
+  clk1_90 <= clk0_90;
+
+  FRAMEGEN_0 : entity work.framegen
+    generic map (
+      BYTES_COUNTER => LINK_0_NUM_BYTES,
+      N_CYCLES      => LINK_0_N_CYCLES)
+    port map (
+      clk0         => clk0_0,
+      rst_n        => rst_n,
+      enable_i     => tx0_enable_clk0_reg,
+      m_avst_valid => tx0_avst_valid_int,
+      m_avst_ready => tx0_avst_ready_int,
+      m_avst_sop   => tx0_avst_sop_int,
+      m_avst_eop   => tx0_avst_eop_int,
+      m_avst_data  => tx0_avst_data_int);
+
+  SER_0 : entity work.ser
+    generic map (
+      BYTES_COUNTER => LINK_0_NUM_BYTES)
+    port map (
+      clk0         => clk0_0,
+      rst_n        => rst_n,
+      s_avst_valid => tx0_avst_valid_int,
+      s_avst_ready => tx0_avst_ready_int,
+      s_avst_sop   => tx0_avst_sop_int,
+      s_avst_eop   => tx0_avst_eop_int,
+      s_avst_data  => tx0_avst_data_int,
+      tx_serial_o  => tx0_serial_o);
+
+  DES_0 : entity work.des
+    generic map (
+      BYTES_COUNTER => LINK_0_NUM_BYTES)
+    port map (
+      clk0         => clk0_0,
+      clk90        => clk0_90,
+      rst_n        => rst_n,
+      sync_o       => rx0_sync_int,
+      m_avst_valid => rx0_avst_valid_int,
+      m_avst_ready => rx0_avst_ready_int,
+      m_avst_sop   => rx0_avst_sop_int,
+      m_avst_eop   => rx0_avst_eop_int,
+      m_avst_data  => rx0_avst_data_int,
+      rx_serial_i  => rx0_serial_i);
+
+  FRAMECMP_0 : entity work.framecmp
+    generic map (
+      BYTES_COUNTER => LINK_0_NUM_BYTES,
+      N_CYCLES      => LINK_0_N_CYCLES)
+    port map (
+      clk0         => clk0_0,
+      rst_n        => rst_n,
+      status_o     => rx0_status_int,
+      s_avst_valid => rx0_avst_valid_int,
+      s_avst_ready => rx0_avst_ready_int,
+      s_avst_sop   => rx0_avst_sop_int,
+      s_avst_eop   => rx0_avst_eop_int,
+      s_avst_data  => rx0_avst_data_int);
+
+  FRAMEGEN_1 : entity work.framegen
+    generic map (
+      BYTES_COUNTER => LINK_1_NUM_BYTES,
+      N_CYCLES      => LINK_1_N_CYCLES)
+    port map (
+      clk0         => clk1_0,
+      rst_n        => rst_n,
+      enable_i     => tx1_enable_clk1_reg,
+      m_avst_valid => tx1_avst_valid_int,
+      m_avst_ready => tx1_avst_ready_int,
+      m_avst_sop   => tx1_avst_sop_int,
+      m_avst_eop   => tx1_avst_eop_int,
+      m_avst_data  => tx1_avst_data_int);
+
+  SER_1 : entity work.ser
+    generic map (
+      BYTES_COUNTER => LINK_1_NUM_BYTES)
+    port map (
+      clk0         => clk1_0,
+      rst_n        => rst_n,
+      s_avst_valid => tx1_avst_valid_int,
+      s_avst_ready => tx1_avst_ready_int,
+      s_avst_sop   => tx1_avst_sop_int,
+      s_avst_eop   => tx1_avst_eop_int,
+      s_avst_data  => tx1_avst_data_int,
+      tx_serial_o  => tx1_serial_o);
+
+  DES_1 : entity work.des
+    generic map (
+      BYTES_COUNTER => LINK_1_NUM_BYTES)
+    port map (
+      clk0         => clk1_0,
+      clk90        => clk1_90,
+      rst_n        => rst_n,
+      sync_o       => rx1_sync_int,
+      m_avst_valid => rx1_avst_valid_int,
+      m_avst_ready => rx1_avst_ready_int,
+      m_avst_sop   => rx1_avst_sop_int,
+      m_avst_eop   => rx1_avst_eop_int,
+      m_avst_data  => rx1_avst_data_int,
+      rx_serial_i  => rx1_serial_i);
+
+  FRAMECMP_1 : entity work.framecmp
+    generic map (
+      BYTES_COUNTER => LINK_1_NUM_BYTES,
+      N_CYCLES      => LINK_1_N_CYCLES)
+    port map (
+      clk0         => clk1_0,
+      rst_n        => rst_n,
+      status_o     => rx1_status_int,
+      s_avst_valid => rx1_avst_valid_int,
+      s_avst_ready => rx1_avst_ready_int,
+      s_avst_sop   => rx1_avst_sop_int,
+      s_avst_eop   => rx1_avst_eop_int,
+      s_avst_data  => rx1_avst_data_int);
+
+  FRAMEGEN_2 : entity work.framegen
+    generic map (
+      BYTES_COUNTER => LINK_2_NUM_BYTES,
+      N_CYCLES      => LINK_2_N_CYCLES)
+    port map (
+      clk0         => clk2_0,
+      rst_n        => rst_n,
+      enable_i     => tx2_enable_clk2_reg,
+      m_avst_valid => tx2_avst_valid_int,
+      m_avst_ready => tx2_avst_ready_int,
+      m_avst_sop   => tx2_avst_sop_int,
+      m_avst_eop   => tx2_avst_eop_int,
+      m_avst_data  => tx2_avst_data_int);
+
+  SER_2 : entity work.ser
+    generic map (
+      BYTES_COUNTER => LINK_2_NUM_BYTES)
+    port map (
+      clk0         => clk2_0,
+      rst_n        => rst_n,
+      s_avst_valid => tx2_avst_valid_int,
+      s_avst_ready => tx2_avst_ready_int,
+      s_avst_sop   => tx2_avst_sop_int,
+      s_avst_eop   => tx2_avst_eop_int,
+      s_avst_data  => tx2_avst_data_int,
+      tx_serial_o  => tx2_serial_o);
+
+  DES_2 : entity work.des
+    generic map (
+      BYTES_COUNTER => LINK_2_NUM_BYTES)
+    port map (
+      clk0         => clk2_0,
+      clk90        => clk2_90,
+      rst_n        => rst_n,
+      sync_o       => rx2_sync_int,
+      m_avst_valid => rx2_avst_valid_int,
+      m_avst_ready => rx2_avst_ready_int,
+      m_avst_sop   => rx2_avst_sop_int,
+      m_avst_eop   => rx2_avst_eop_int,
+      m_avst_data  => rx2_avst_data_int,
+      rx_serial_i  => rx2_serial_i);
+
+  FRAMECMP_2 : entity work.framecmp
+    generic map (
+      BYTES_COUNTER => LINK_2_NUM_BYTES,
+      N_CYCLES      => LINK_2_N_CYCLES)
+    port map (
+      clk0         => clk2_0,
+      rst_n        => rst_n,
+      status_o     => rx2_status_int,
+      s_avst_valid => rx2_avst_valid_int,
+      s_avst_ready => rx2_avst_ready_int,
+      s_avst_sop   => rx2_avst_sop_int,
+      s_avst_eop   => rx2_avst_eop_int,
+      s_avst_data  => rx2_avst_data_int);
+
+
+  process(clk0_0, clk1_0, clk2_0, rst_n, sysclk)
+  begin
+    if rst_n = '0' then
+      tx0_enable_reg <= '0';
+      tx1_enable_reg <= '0';
+      tx2_enable_reg <= '0';
+    elsif rising_edge(sysclk) then
+      avmm_readdata_reg     <= avmm_readdata_next;
+      tx0_enable_reg        <= tx0_enable_next;
+      tx1_enable_reg        <= tx1_enable_next;
+      tx2_enable_reg        <= tx2_enable_next;
+      rx0_status_sysclk_reg <= rx0_status_int;
+      rx1_status_sysclk_reg <= rx1_status_int;
+      rx2_status_sysclk_reg <= rx2_status_int;
+    end if;
+    if rising_edge(clk0_0) then
+      tx0_enable_clk0_reg <= tx0_enable_reg;
+    end if;
+    if rising_edge(clk1_0) then
+      tx1_enable_clk1_reg <= tx1_enable_reg;
+    end if;
+    if rising_edge(clk2_0) then
+      tx2_enable_clk2_reg <= tx2_enable_reg;
+    end if;
+  end process;
+
+  process(avmm_address, avmm_read, avmm_readdata_reg, avmm_write,
+          avmm_writedata(0), rx0_status_sysclk_reg, rx1_status_sysclk_reg,
+          rx2_status_sysclk_reg, tx0_enable_reg, tx1_enable_reg,
+          tx2_enable_reg)
+  begin
+    avmm_readdata_next <= avmm_readdata_reg;
+    tx0_enable_next    <= tx0_enable_reg;
+    tx1_enable_next    <= tx1_enable_reg;
+    tx2_enable_next    <= tx2_enable_reg;
+    if avmm_read = '1' then
+      case to_integer(unsigned(avmm_address)) is
+        when 0 =>
+          avmm_readdata_next <= (0 => tx0_enable_reg, others => '0');
+        when 1 =>
+          if rx0_status_sysclk_reg = '1' then
+            avmm_readdata_next <= std_logic_vector(to_unsigned(2, 32));
+          else
+            avmm_readdata_next <= std_logic_vector(to_unsigned(1, 32));
+          end if;
+        when 2 =>
+          avmm_readdata_next <= (0 => tx1_enable_reg, others => '0');
+        when 3 =>
+          if rx1_status_sysclk_reg = '1' then
+            avmm_readdata_next <= std_logic_vector(to_unsigned(2, 32));
+          else
+            avmm_readdata_next <= std_logic_vector(to_unsigned(1, 32));
+          end if;
+        when 4 =>
+          avmm_readdata_next <= (0 => tx2_enable_reg, others => '0');
+        when 5 =>
+          if rx2_status_sysclk_reg = '1' then
+            avmm_readdata_next <= std_logic_vector(to_unsigned(2, 32));
+          else
+            avmm_readdata_next <= std_logic_vector(to_unsigned(1, 32));
+          end if;
+        when others =>
+          avmm_readdata_next <= (others => '0');
+      end case;
+    else
+      avmm_readdata_next <= (others => 'X');
+    end if;
+    if avmm_write = '1' then
+      case to_integer(unsigned(avmm_address)) is
+        when 0 =>
+          tx0_enable_next <= avmm_writedata(0);
+        when 2 =>
+          tx1_enable_next <= avmm_writedata(0);
+        when 4 =>
+          tx2_enable_next <= avmm_writedata(0);
+        when others =>
+          null;
+      end case;
+    end if;
+  end process;
+
+  avmm_readdata <= avmm_readdata_reg;
+
+end architecture serdes_rtl;

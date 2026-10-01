@@ -1,0 +1,471 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2018  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions
+# and other software and tools, and its AMPP partner logic
+# functions, and any output files from any of the foregoing
+# (including device programming or simulation files), and any
+# associated documentation or information are expressly subject
+# to the terms and conditions of the Intel Program License
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+# Date created = 09:04:05  July 02, 2021
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		ccd_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CEBA5F23C8
+set_global_assignment -name TOP_LEVEL_ENTITY ccd
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.1.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:03:04  DECEMBER 14, 2021"
+set_global_assignment -name LAST_QUARTUS_VERSION "18.1.0 Lite Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STILL AIR"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name ENABLE_OCT_DONE OFF
+set_global_assignment -name ENABLE_CONFIGURATION_PINS OFF
+set_global_assignment -name ENABLE_BOOT_SEL_PIN OFF
+set_global_assignment -name STRATIXV_CONFIGURATION_SCHEME "ACTIVE SERIAL X1"
+set_global_assignment -name USE_CONFIGURATION_DEVICE ON
+set_global_assignment -name STRATIXII_CONFIGURATION_DEVICE EPCS128
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN ON
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED"
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_12_5MHZ
+set_location_assignment PIN_V15 -to sysclk
+set_global_assignment -name ENABLE_SIGNALTAP OFF
+set_global_assignment -name USE_SIGNALTAP_FILE output_files/stp1.stp
+set_location_assignment PIN_T8 -to lvds_serial_i
+set_location_assignment PIN_T7 -to "lvds_serial_i(n)"
+set_location_assignment PIN_V13 -to led_o[0]
+set_location_assignment PIN_U13 -to led_o[1]
+set_location_assignment PIN_R14 -to led_o[2]
+set_location_assignment PIN_T12 -to led_o[3]
+set_location_assignment PIN_V6 -to lvds_serial_o
+set_location_assignment PIN_B5 -to board_id_i[7]
+set_location_assignment PIN_B6 -to board_id_i[6]
+set_location_assignment PIN_A7 -to board_id_i[5]
+set_location_assignment PIN_B7 -to board_id_i[4]
+set_location_assignment PIN_D7 -to board_id_i[3]
+set_location_assignment PIN_A8 -to board_id_i[2]
+set_location_assignment PIN_C8 -to board_id_i[1]
+set_location_assignment PIN_C9 -to board_id_i[0]
+set_location_assignment PIN_W9 -to lvds_to_ccd_o
+set_location_assignment PIN_N6 -to lvds_from_ccd_i
+set_location_assignment PIN_P6 -to "lvds_from_ccd_i(n)"
+set_location_assignment PIN_U8 -to lvds_to_ejection_o
+set_location_assignment PIN_U7 -to "lvds_to_ejection_o(n)"
+set_location_assignment PIN_R5 -to lvds_from_ejection_i
+set_location_assignment PIN_R6 -to "lvds_from_ejection_i(n)"
+
+set_location_assignment PIN_AB21 -to ad_blue_e_i[0]
+set_location_assignment PIN_AA20 -to ad_blue_e_i[1]
+set_location_assignment PIN_AB20 -to ad_blue_e_i[2]
+set_location_assignment PIN_AA19 -to ad_blue_e_i[3]
+set_location_assignment PIN_AA18 -to ad_blue_e_i[4]
+set_location_assignment PIN_AB18 -to ad_blue_e_i[5]
+set_location_assignment PIN_AA17 -to ad_blue_e_i[6]
+set_location_assignment PIN_AB17 -to ad_blue_e_i[7]
+set_location_assignment PIN_AA15 -to ad_blue_e_i[8]
+set_location_assignment PIN_AB15 -to ad_blue_e_i[9]
+set_location_assignment PIN_AA14 -to ad_blue_e_i[10]
+set_location_assignment PIN_AA13 -to ad_blue_e_i[11]
+set_location_assignment PIN_AA12 -to ad_blue_o_i[0]
+set_location_assignment PIN_AB12 -to ad_blue_o_i[1]
+set_location_assignment PIN_Y11 -to ad_blue_o_i[2]
+set_location_assignment PIN_AB11 -to ad_blue_o_i[3]
+set_location_assignment PIN_AA10 -to ad_blue_o_i[4]
+set_location_assignment PIN_AA9 -to ad_blue_o_i[5]
+set_location_assignment PIN_AA8 -to ad_blue_o_i[7]
+set_location_assignment PIN_AB8 -to ad_blue_o_i[6]
+set_location_assignment PIN_AB7 -to ad_blue_o_i[8]
+set_location_assignment PIN_AA7 -to ad_blue_o_i[9]
+set_location_assignment PIN_AB6 -to ad_blue_o_i[10]
+set_location_assignment PIN_AB5 -to ad_blue_o_i[11]
+set_location_assignment PIN_H9 -to ad_green_e_i[0]
+set_location_assignment PIN_E7 -to ad_green_e_i[1]
+set_location_assignment PIN_F7 -to ad_green_e_i[2]
+set_location_assignment PIN_J7 -to ad_green_e_i[3]
+set_location_assignment PIN_K7 -to ad_green_e_i[4]
+set_location_assignment PIN_L7 -to ad_green_e_i[5]
+set_location_assignment PIN_G6 -to ad_green_e_i[6]
+set_location_assignment PIN_H6 -to ad_green_e_i[7]
+set_location_assignment PIN_D6 -to ad_green_e_i[8]
+set_location_assignment PIN_C6 -to ad_green_e_i[9]
+set_location_assignment PIN_J9 -to ad_green_e_i[10]
+set_location_assignment PIN_J8 -to ad_green_e_i[11]
+set_location_assignment PIN_R10 -to ad_green_o_i[0]
+set_location_assignment PIN_R11 -to ad_green_o_i[1]
+set_location_assignment PIN_U11 -to ad_green_o_i[2]
+set_location_assignment PIN_T10 -to ad_green_o_i[3]
+set_location_assignment PIN_U10 -to ad_green_o_i[4]
+set_location_assignment PIN_V10 -to ad_green_o_i[5]
+set_location_assignment PIN_Y10 -to ad_green_o_i[6]
+set_location_assignment PIN_T9 -to ad_green_o_i[7]
+set_location_assignment PIN_V9 -to ad_green_o_i[8]
+set_location_assignment PIN_Y9 -to ad_green_o_i[9]
+set_location_assignment PIN_P8 -to ad_green_o_i[10]
+set_location_assignment PIN_R9 -to ad_green_o_i[11]
+set_location_assignment PIN_Y14 -to ad_red_e_i[0]
+set_location_assignment PIN_Y15 -to ad_red_e_i[1]
+set_location_assignment PIN_U20 -to ad_red_e_i[2]
+set_location_assignment PIN_V20 -to ad_red_e_i[3]
+set_location_assignment PIN_V19 -to ad_red_e_i[4]
+set_location_assignment PIN_Y20 -to ad_red_e_i[5]
+set_location_assignment PIN_Y19 -to ad_red_e_i[6]
+set_location_assignment PIN_W19 -to ad_red_e_i[7]
+set_location_assignment PIN_Y17 -to ad_red_e_i[8]
+set_location_assignment PIN_Y16 -to ad_red_e_i[9]
+set_location_assignment PIN_T14 -to ad_red_e_i[10]
+set_location_assignment PIN_T13 -to ad_red_e_i[11]
+set_location_assignment PIN_R22 -to ad_red_o_i[0]
+set_location_assignment PIN_R21 -to ad_red_o_i[1]
+set_location_assignment PIN_T22 -to ad_red_o_i[2]
+set_location_assignment PIN_U22 -to ad_red_o_i[3]
+set_location_assignment PIN_U21 -to ad_red_o_i[4]
+set_location_assignment PIN_V21 -to ad_red_o_i[5]
+set_location_assignment PIN_W22 -to ad_red_o_i[6]
+set_location_assignment PIN_W21 -to ad_red_o_i[7]
+set_location_assignment PIN_Y22 -to ad_red_o_i[8]
+set_location_assignment PIN_Y21 -to ad_red_o_i[9]
+set_location_assignment PIN_AA22 -to ad_red_o_i[10]
+set_location_assignment PIN_AB22 -to ad_red_o_i[11]
+
+set_location_assignment PIN_L17 -to ad_cplob_o[0]
+set_location_assignment PIN_R17 -to ad_cplob_o[1]
+set_location_assignment PIN_L22 -to ad_data_clk_o[0]
+set_location_assignment PIN_M22 -to ad_data_clk_o[1]
+set_location_assignment PIN_K17 -to ad_pblk_o[0]
+set_location_assignment PIN_N21 -to ad_pblk_o[1]
+set_location_assignment PIN_K21 -to ad_shd_o[0]
+set_location_assignment PIN_P18 -to ad_shd_o[1]
+set_location_assignment PIN_K22 -to ad_shp_o[0]
+set_location_assignment PIN_P19 -to ad_shp_o[1]
+
+
+set_location_assignment PIN_P17 -to ccd_theta_1a_o[0]
+set_location_assignment PIN_L18 -to ccd_theta_1a_o[1]
+set_location_assignment PIN_N19 -to ccd_theta_2a_o[0]
+set_location_assignment PIN_L19 -to ccd_theta_2a_o[1]
+set_location_assignment PIN_M20 -to ccd_theta_2b_o
+set_location_assignment PIN_N20 -to ccd_cp_o
+set_location_assignment PIN_M21 -to ccd_rs_o
+
+set_location_assignment PIN_E9 -to ad_spi_data0_o
+set_location_assignment PIN_U15 -to ad_spi_data1_o
+set_location_assignment PIN_A9 -to ad_spi_ss_0
+set_location_assignment PIN_D9 -to ad_spi_ss_1
+set_location_assignment PIN_B10 -to ad_spi_ss_2
+set_location_assignment PIN_V18 -to ad_spi_ss_3
+set_location_assignment PIN_U16 -to ad_spi_ss_4
+set_location_assignment PIN_U17 -to ad_spi_ss_5
+
+set_location_assignment PIN_A10 -to ad_spi_sclk_o[0]
+set_location_assignment PIN_P14 -to ad_spi_sclk_o[1]
+
+
+set_location_assignment FF_X1_Y1_N19 -to "poc_serdes_qsys:u0|data_recovery:data_recovery_0|data_phase0_reg[0]"
+set_location_assignment FF_X1_Y1_N20 -to "poc_serdes_qsys:u0|data_recovery:data_recovery_0|data_phase90_reg[0]"
+set_location_assignment FF_X2_Y1_N19 -to "poc_serdes_qsys:u0|data_recovery:data_recovery_0|data_phase180_reg[0]"
+set_location_assignment FF_X2_Y1_N20 -to "poc_serdes_qsys:u0|data_recovery:data_recovery_0|data_phase270_reg[0]"
+
+
+set_location_assignment FF_X3_Y1_N19 -to "poc_serdes_qsys:u0|packet_comm_ejection:packet_comm_ejection_0|data_phase0_reg[0]"
+set_location_assignment FF_X3_Y1_N20 -to "poc_serdes_qsys:u0|packet_comm_ejection:packet_comm_ejection_0|data_phase90_reg[0]"
+set_location_assignment FF_X4_Y1_N19 -to "poc_serdes_qsys:u0|packet_comm_ejection:packet_comm_ejection_0|data_phase180_reg[0]"
+set_location_assignment FF_X4_Y1_N20 -to "poc_serdes_qsys:u0|packet_comm_ejection:packet_comm_ejection_0|data_phase270_reg[0]"
+
+
+set_location_assignment FF_X6_Y1_N19 -to "poc_serdes_qsys:u0|packet_comm_ihm:packet_comm_ihm_0|data_phase0_reg[0]"
+set_location_assignment FF_X6_Y1_N20 -to "poc_serdes_qsys:u0|packet_comm_ihm:packet_comm_ihm_0|data_phase90_reg[0]"
+set_location_assignment FF_X7_Y1_N19 -to "poc_serdes_qsys:u0|packet_comm_ihm:packet_comm_ihm_0|data_phase180_reg[0]"
+set_location_assignment FF_X7_Y1_N20 -to "poc_serdes_qsys:u0|packet_comm_ihm:packet_comm_ihm_0|data_phase270_reg[0]"
+
+
+set_global_assignment -name DEVICE_MIGRATION_LIST 5CEBA5F23C8
+set_global_assignment -name PLACEMENT_EFFORT_MULTIPLIER 4.0
+set_global_assignment -name POWER_USE_TA_VALUE 45
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_instance_assignment -name IO_STANDARD LVDS -to lvds_serial_i
+set_instance_assignment -name INPUT_TERMINATION DIFFERENTIAL -to lvds_serial_i
+set_instance_assignment -name INPUT_TERMINATION DIFFERENTIAL -to "lvds_serial_i(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to lvds_serial_o
+set_instance_assignment -name IO_STANDARD LVDS -to lvds_from_ccd_i
+set_instance_assignment -name IO_STANDARD LVDS -to lvds_to_ccd_o
+set_instance_assignment -name INPUT_TERMINATION DIFFERENTIAL -to lvds_from_ccd_i
+set_instance_assignment -name INPUT_TERMINATION DIFFERENTIAL -to "lvds_from_ccd_i(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to lvds_to_ejection_o
+set_instance_assignment -name IO_STANDARD LVDS -to lvds_from_ejection_i
+set_instance_assignment -name INPUT_TERMINATION DIFFERENTIAL -to lvds_from_ejection_i
+set_instance_assignment -name INPUT_TERMINATION DIFFERENTIAL -to "lvds_from_ejection_i(n)"
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to led_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sysclk
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to board_id_i[1]
+set_instance_assignment -name IO_STANDARD LVDS -to "lvds_to_ejection_o(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to "lvds_serial_i(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to "lvds_from_ejection_i(n)"
+set_instance_assignment -name IO_STANDARD LVDS -to "lvds_from_ccd_i(n)"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to altera_internal_jtag~TCKUTAP
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_0:pll_0|altera_pll:altera_pll_i|outclk_wire[0]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_0:pll_0|altera_pll:altera_pll_i|outclk_wire[2]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_0:pll_0|altera_pll:altera_pll_i|outclk_wire[3]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_0:pll_0|altera_pll:altera_pll_i|outclk_wire[1]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_0:pll_0|altera_pll:altera_pll_i|outclk_wire[4]"
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_cplob_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_cplob_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_cplob_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_cplob_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_cplob_o[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_cplob_o[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_data_clk_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_data_clk_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_data_clk_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_data_clk_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_data_clk_o[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_data_clk_o[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_pblk_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_pblk_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_pblk_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_pblk_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_pblk_o[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_pblk_o[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shd_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shd_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shd_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shd_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shd_o[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shd_o[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shp_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shp_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shp_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shp_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shp_o[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_shp_o[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_cp_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_rs_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_sh_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_sh_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_sh_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_theta_1a_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_theta_1a_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_theta_2a_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_theta_2a_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ccd_theta_2b_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_data0_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_data1_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_data2_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_data3_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_data4_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_data5_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_sclk_o[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_sclk_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_sclk_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_sclk_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_sclk_o[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_sclk_o[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_ss_0
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_ss_1
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_ss_2
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_ss_3
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_ss_4
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_spi_ss_5
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_e_i[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_green_o_i[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_e_i[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_blue_o_i[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_e_i[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to ad_red_o_i[11]
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -from sysclk -to "sysclk_control:u1|sysclk_control_altclkctrl_0:altclkctrl_0|sysclk_control_altclkctrl_0_sub:sysclk_control_altclkctrl_0_sub_component|wire_sd1_outclk"
+set_instance_assignment -name GLOBAL_SIGNAL OFF -to sysclk
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_1:pll_1|altera_pll:altera_pll_i|outclk_wire[1]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_1:pll_1|altera_pll:altera_pll_i|outclk_wire[2]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_1:pll_1|altera_pll:altera_pll_i|outclk_wire[3]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_1:pll_1|altera_pll:altera_pll_i|outclk_wire[4]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_1:pll_1|altera_pll:altera_pll_i|outclk_wire[5]"
+set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to "poc_serdes_qsys:u0|poc_serdes_qsys_pll_0:pll_0|altera_pll:altera_pll_i|outclk_wire[5]"
+set_global_assignment -name QIP_FILE software/ccd/mem_init/meminit.qip
+set_global_assignment -name QIP_FILE ccd_qsys/synthesis/ccd_qsys.qip
+set_global_assignment -name SDC_FILE ccd.sdc
+set_global_assignment -name VHDL_FILE ../../rtl/ccd.vhd
+set_global_assignment -name QIP_FILE sysclk_control/synthesis/sysclk_control.qip
+set_global_assignment -name SIGNALTAP_FILE stp1.stp
+set_location_assignment PIN_D13 -to sdram_addr_o[0]
+set_location_assignment PIN_D12 -to sdram_addr_o[1]
+set_location_assignment PIN_E12 -to sdram_addr_o[2]
+set_location_assignment PIN_C11 -to sdram_addr_o[3]
+set_location_assignment PIN_H10 -to sdram_addr_o[4]
+set_location_assignment PIN_G11 -to sdram_addr_o[5]
+set_location_assignment PIN_H11 -to sdram_addr_o[6]
+set_location_assignment PIN_J11 -to sdram_addr_o[7]
+set_location_assignment PIN_G12 -to sdram_addr_o[8]
+set_location_assignment PIN_F12 -to sdram_addr_o[9]
+set_location_assignment PIN_C13 -to sdram_addr_o[10]
+set_location_assignment PIN_F13 -to sdram_addr_o[11]
+set_location_assignment PIN_J13 -to sdram_addr_o[12]
+set_location_assignment PIN_A14 -to sdram_banks_o[0]
+set_location_assignment PIN_A13 -to sdram_banks_o[1]
+set_location_assignment PIN_C15 -to sdram_cas_n_o
+set_location_assignment PIN_B12 -to sdram_cke_o
+set_location_assignment PIN_H8 -to sdram_clk_o
+set_location_assignment PIN_B15 -to sdram_cs_n_o
+set_location_assignment PIN_H18 -to sdram_dq_o[0]
+set_location_assignment PIN_G18 -to sdram_dq_o[1]
+set_location_assignment PIN_G17 -to sdram_dq_o[2]
+set_location_assignment PIN_D17 -to sdram_dq_o[3]
+set_location_assignment PIN_E16 -to sdram_dq_o[4]
+set_location_assignment PIN_F15 -to sdram_dq_o[5]
+set_location_assignment PIN_E15 -to sdram_dq_o[6]
+set_location_assignment PIN_F14 -to sdram_dq_o[7]
+set_location_assignment PIN_H14 -to sdram_dq_o[8]
+set_location_assignment PIN_G15 -to sdram_dq_o[9]
+set_location_assignment PIN_G16 -to sdram_dq_o[10]
+set_location_assignment PIN_K16 -to sdram_dq_o[11]
+set_location_assignment PIN_J18 -to sdram_dq_o[12]
+set_location_assignment PIN_J19 -to sdram_dq_o[13]
+set_location_assignment PIN_J17 -to sdram_dq_o[14]
+set_location_assignment PIN_K19 -to sdram_dq_o[15]
+set_location_assignment PIN_C16 -to sdram_dqm_o
+set_location_assignment PIN_A15 -to sdram_ras_n_o
+set_location_assignment PIN_B13 -to sdram_udqm_o
+set_location_assignment PIN_B16 -to sdram_we_n_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_addr_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_addr_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_addr_o[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_addr_o[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_addr_o[12]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_cke_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_clk_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[3]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[4]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[5]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[6]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[7]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[8]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[9]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[10]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[11]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[12]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[13]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[14]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dq_o[15]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_dqm_o
+set_instance_assignment -name IO_STANDARD "2.5 V" -to sdram_udqm_o
+set_location_assignment PIN_U6 -to "lvds_serial_o(n)"
+set_location_assignment PIN_W8 -to "lvds_to_ccd_o(n)"
+set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
+set_global_assignment -name CVP_CONFDONE_OPEN_DRAIN OFF
+set_global_assignment -name ENABLE_INIT_DONE_OUTPUT OFF
+set_location_assignment PIN_M18 -to ccd_sh_o
+set_global_assignment -name ENABLE_CVP_CONFDONE OFF
+set_global_assignment -name SIGNALTAP_FILE output_files/stp1.stp
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

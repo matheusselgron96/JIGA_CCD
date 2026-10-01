@@ -1,0 +1,18 @@
+
+namespace eval QSYS_HEADER {
+
+    variable MASTER_0_JTAG_TO_NIOS_BASE 0x110
+    variable MASTER_0_BOARD_ID_BASE 0xc0
+    variable MASTER_0_NIOS_WRITE_LED_BASE 0xd0
+    variable MASTER_0_SPI_0_BASE 0x80
+    variable MASTER_0_SPI_VALUE_BASE 0x100
+    variable MASTER_0_RETURN_NIOS_BASE 0xf0
+    variable MASTER_0_RJ45_TESTER_0_BASE 0x40
+    variable MASTER_0_SAVE_FIFO_BASE 0xe0
+    variable MASTER_0_FIFO_EVEN_BASE 0x120
+    variable MASTER_0_FIFO_ODD_BASE 0x128
+    variable MASTER_0_AD_MODULE_0_BASE 0xa0
+    variable MASTER_0_RJ45_TESTER_1_BASE 0x0
+
+}
+
