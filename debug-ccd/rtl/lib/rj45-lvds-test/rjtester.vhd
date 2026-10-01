@@ -95,6 +95,15 @@ architecture serdes_rtl of rjtester is
   signal rx2_sync_int       : std_logic;
   signal rx2_status_int     : std_logic;
 
+  -- Contadores de frames por link (dominio de clock do proprio link).
+  -- Incrementam nos pulsos frame_ok / frame_err do framecmp, saturam em
+  -- 2^32-1 e sao zerados pelo registrador de controle (+0x18).
+  signal rx0_frames_ok_reg  : unsigned(31 downto 0) := (others => '0'); -- link 0: frames recebidos sem erro
+  signal rx0_frames_err_reg : unsigned(31 downto 0) := (others => '0'); -- link 0: frames recebidos com erro
+  signal rx1_frames_ok_reg  : unsigned(31 downto 0) := (others => '0'); -- link 1: frames recebidos sem erro
+  signal rx1_frames_err_reg : unsigned(31 downto 0) := (others => '0'); -- link 1: frames recebidos com erro
+  signal rx2_frames_ok_reg  : unsigned(31 downto 0) := (others => '0'); -- link 2: frames recebidos sem erro
+  signal rx2_frames_err_reg : unsigned(31 downto 0) := (others => '0'); -- link 2: frames recebidos com erro
 
   -- Sinais dos registradores de enable dos canais --> Processador muda esses valores
   signal tx0_enable_next, tx0_enable_reg       : std_logic := '0';
@@ -116,6 +125,18 @@ architecture serdes_rtl of rjtester is
   -- link 1 will use the same clock as link 0
   signal clk1_0  : std_logic;           -- clock from pll 0 degrees
   signal clk1_90 : std_logic;           -- clock from pll 90 degrees
+
+  -- Pulsos de fim de frame vindos do framecmp (1 ciclo, no clock do link)
+  signal rx0_frame_ok_int  : std_logic; -- link 0: frame recebido sem erro
+  signal rx0_frame_err_int : std_logic; -- link 0: frame recebido com erro
+  signal rx1_frame_ok_int  : std_logic; -- link 1: frame recebido sem erro
+  signal rx1_frame_err_int : std_logic; -- link 1: frame recebido com erro
+  signal rx2_frame_ok_int  : std_logic; -- link 2: frame recebido sem erro
+  signal rx2_frame_err_int : std_logic; -- link 2: frame recebido com erro
+
+  signal clear_clk0 : std_logic := '0'; -- clear para os links 0 e 1 (ambos em clk0_0)
+  signal clear_clk2 : std_logic := '0'; -- clear para o link 2 (clk2_0)
+  
 
 begin
 
@@ -164,7 +185,7 @@ begin
       m_avst_data  => rx0_avst_data_int,
       rx_serial_i  => rx0_serial_i);
 
-  FRAMECMP_0 : entity work.framecmp
+   FRAMECMP_0 : entity work.framecmp
     generic map (
       BYTES_COUNTER => LINK_0_NUM_BYTES,
       N_CYCLES      => LINK_0_N_CYCLES)
@@ -172,6 +193,8 @@ begin
       clk0         => clk0_0,
       rst_n        => rst_n,
       status_o     => rx0_status_int,
+      frame_ok_o   => rx0_frame_ok_int,
+      frame_err_o  => rx0_frame_err_int,
       s_avst_valid => rx0_avst_valid_int,
       s_avst_ready => rx0_avst_ready_int,
       s_avst_sop   => rx0_avst_sop_int,
@@ -228,6 +251,8 @@ begin
       clk0         => clk1_0,
       rst_n        => rst_n,
       status_o     => rx1_status_int,
+      frame_ok_o   => rx1_frame_ok_int,
+      frame_err_o  => rx1_frame_err_int,
       s_avst_valid => rx1_avst_valid_int,
       s_avst_ready => rx1_avst_ready_int,
       s_avst_sop   => rx1_avst_sop_int,
@@ -276,7 +301,7 @@ begin
       m_avst_data  => rx2_avst_data_int,
       rx_serial_i  => rx2_serial_i);
 
-  FRAMECMP_2 : entity work.framecmp
+ FRAMECMP_2 : entity work.framecmp
     generic map (
       BYTES_COUNTER => LINK_2_NUM_BYTES,
       N_CYCLES      => LINK_2_N_CYCLES)
@@ -284,6 +309,8 @@ begin
       clk0         => clk2_0,
       rst_n        => rst_n,
       status_o     => rx2_status_int,
+      frame_ok_o   => rx2_frame_ok_int,
+      frame_err_o  => rx2_frame_err_int,
       s_avst_valid => rx2_avst_valid_int,
       s_avst_ready => rx2_avst_ready_int,
       s_avst_sop   => rx2_avst_sop_int,
@@ -333,6 +360,63 @@ begin
       tx2_enable_clk2_reg <= tx2_enable_reg;
     end if;
   end process;
+
+    -- Contadores de frames dos links 0 e 1 (dominio clk0_0).
+  -- Prioridade: reset > clear > incremento. Saturam em COUNTER_MAX.
+  process(clk0_0, rst_n)
+  begin
+    if rst_n = '0' then
+      rx0_frames_ok_reg  <= (others => '0');
+      rx0_frames_err_reg <= (others => '0');
+      rx1_frames_ok_reg  <= (others => '0');
+      rx1_frames_err_reg <= (others => '0');
+    elsif rising_edge(clk0_0) then
+      if clear_clk2 = '1' then
+        rx0_frames_ok_reg  <= (others => '0');
+        rx0_frames_err_reg <= (others => '0');
+        rx1_frames_ok_reg  <= (others => '0');
+        rx1_frames_err_reg <= (others => '0');
+      else
+        -- Link 0
+        if rx0_frame_ok_int = '1' and rx0_frames_ok_reg /= COUNTER_MAX then
+          rx0_frames_ok_reg <= rx0_frames_ok_reg + 1;
+        end if;
+        if rx0_frame_err_int = '1' and rx0_frames_err_reg /= COUNTER_MAX then
+          rx0_frames_err_reg <= rx0_frames_err_reg + 1;
+        end if;
+        -- Link 1
+        if rx1_frame_ok_int = '1' and rx1_frames_ok_reg /= COUNTER_MAX then
+          rx1_frames_ok_reg <= rx1_frames_ok_reg + 1;
+        end if;
+        if rx1_frame_err_int = '1' and rx1_frames_err_reg /= COUNTER_MAX then
+          rx1_frames_err_reg <= rx1_frames_err_reg + 1;
+        end if;
+      end if;
+    end if;
+  end process;
+
+   -- Contadores de frames dos links 2 (dominio clk2_0).
+  -- Prioridade: reset > clear > incremento. Saturam em COUNTER_MAX.
+  process(clk2_0, rst_n)
+  begin
+    if rst_n = '0' then
+      rx2_frames_ok_reg  <= (others => '0');
+      rx2_frames_err_reg <= (others => '0');
+    elsif rising_edge(clk2_0) then
+      if clear_clk2 = '1' then
+        rx2_frames_ok_reg  <= (others => '0');
+        rx2_frames_err_reg <= (others => '0');
+      else
+        if rx2_frame_ok_int = '1' and rx2_frames_ok_reg /= COUNTER_MAX then
+          rx2_frames_ok_reg <= rx2_frames_ok_reg + 1;
+        end if;
+        if rx2_frame_err_int = '1' and rx2_frames_err_reg /= COUNTER_MAX then
+          rx2_frames_err_reg <= rx2_frames_err_reg + 1;
+        end if;
+      end if;
+    end if;
+  end process;
+
 
   process(avmm_address, avmm_read, avmm_readdata_reg, avmm_write,
           avmm_writedata(0), rx0_status_sysclk_reg, rx1_status_sysclk_reg,
