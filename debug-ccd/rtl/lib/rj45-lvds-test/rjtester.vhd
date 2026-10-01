@@ -458,10 +458,13 @@ process(clk2_0)
   end process;
 
 
-  process(avmm_address, avmm_read, avmm_readdata_reg, avmm_write,
+   process(avmm_address, avmm_read, avmm_readdata_reg, avmm_write,
           avmm_writedata(0), rx0_status_sysclk_reg, rx1_status_sysclk_reg,
           rx2_status_sysclk_reg, tx0_enable_reg, tx1_enable_reg,
-          tx2_enable_reg)
+          tx2_enable_reg,
+          rx0_frames_ok_sysclk_reg, rx0_frames_err_sysclk_reg,
+          rx1_frames_ok_sysclk_reg, rx1_frames_err_sysclk_reg,
+          rx2_frames_ok_sysclk_reg, rx2_frames_err_sysclk_reg)
   begin
     avmm_readdata_next <= avmm_readdata_reg;
     tx0_enable_next    <= tx0_enable_reg;
@@ -494,6 +497,22 @@ process(clk2_0)
           else
             avmm_readdata_next <= std_logic_vector(to_unsigned(1, 32));
           end if;
+        when 6 =>
+          -- Registrador de controle: so escrita. Le 0 para nao ficar indefinido.
+          avmm_readdata_next <= (others => '0');
+        -- Contadores de frames (copias no dominio do sysclk; ler com TX desligados)
+        when 7 =>
+          avmm_readdata_next <= std_logic_vector(rx0_frames_ok_sysclk_reg);
+        when 8 =>
+          avmm_readdata_next <= std_logic_vector(rx0_frames_err_sysclk_reg);
+        when 9 =>
+          avmm_readdata_next <= std_logic_vector(rx1_frames_ok_sysclk_reg);
+        when 10 =>
+          avmm_readdata_next <= std_logic_vector(rx1_frames_err_sysclk_reg);
+        when 11 =>
+          avmm_readdata_next <= std_logic_vector(rx2_frames_ok_sysclk_reg);
+        when 12 =>
+          avmm_readdata_next <= std_logic_vector(rx2_frames_err_sysclk_reg);
         when others =>
           avmm_readdata_next <= (others => '0');
       end case;
