@@ -185,71 +185,127 @@ namespace eval ctrlPIO {
     }
 
     proc testLVDS {} {
-
+        #Inicialização de variaveis
         set ::ctrlPIO::LVDSTest1 0
         set ::ctrlPIO::LVDSTest2 0
         set ::ctrlPIO::LVDSTest3 0
+
+        #Escrevo a mensagem no log do dashboard e no arquivo
         ::ctrlPIO::writeText {TESTE LVDS = Iniciando teste LVDS}
+
+        #Desabilita os botões do dashboard
 		::ctrlPIO::controlButtons 0
+
+        # Liga o link do transmissor 1
         master_write_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0 ] 1
+        
+        #inicializa variaveis
         set i 0
 		set temp 0
+
+        #Apaga os Leds
         dashboard_set_property ${::ctrlPIO::dash_path} con0LED color "green_off"
+        
+        #Enquanto i for menor que 5000  (DUVIDA CLAUDE)
         while {$i < 5000} {
+            # Le o registrador do transmissor 1
             set temp [ expr [ master_read_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0x4 ] 1 ]]
             incr i
         }
+
+        #Se temp == 2
         if {[expr $temp == 2]} {
+            # Marca o transmissor 1 como testado
             set ::ctrlPIO::LVDSTest1 1
+            #Escreve no log e no txt que o teste 1 esta ok
             ::ctrlPIO::writeText {TESTE LVDS = par LVDS 1 OK!}
+            # Muda a cor do LED no dashboard
             dashboard_set_property ${::ctrlPIO::dash_path} con0LED color "green"
         } else {
+            #Marca o transmissor 1 como testado e com ERRO
             set ::ctrlPIO::LVDSTest1 2
+            #Escreve no log e no .txt
             ::ctrlPIO::writeText {TESTE LVDS = par LVDS 1 com erro!}
+            #Muda a cor do led no dashboard
             dashboard_set_property ${::ctrlPIO::dash_path} con0LED color "red"
         }
 
+        # Apaga os leds do conector 2
         dashboard_set_property ${::ctrlPIO::dash_path} con1LED color "green_off"
+        
+        # Liga o conector 2
         master_write_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0x8 ] 1
+        
+        #inicializa variaveis
         set i 0
 		set temp 0
+
+        #Enquanto i for menor que 5000  (DUVIDA CLAUDE)
         while {$i < 5000} {
+            # Le o registrador do transmissor 2
             set temp [ expr [ master_read_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0xc ] 1 ]]
             incr i
         }
+
+        #Se temp == 2
         if {[expr $temp == 2]} {
+             # Marca o transmissor 2 como testado
             set ::ctrlPIO::LVDSTest2 1
+             #Escreve no log e no .txt
             ::ctrlPIO::writeText {TESTE LVDS = par LVDS 2 OK!}
+            #Muda a cor do led no dashboard
             dashboard_set_property ${::ctrlPIO::dash_path} con1LED color "green"
         } else {
-            set ::ctrlPIO::LVDSTest2 1
+            #Marca o transmissor 2 como testado e com ERRO
+            set ::ctrlPIO::LVDSTest2 2
+             #Escreve no log e no .txt
             ::ctrlPIO::writeText {TESTE LVDS = par LVDS 2 com erro!}
+            #Muda a cor do led no dashboard
             dashboard_set_property ${::ctrlPIO::dash_path} con1LED color "red"
         }   
-
+        #Apaga os Leds
         dashboard_set_property ${::ctrlPIO::dash_path} con2LED color "green_off"
+        
+         # Liga o conector 3
         master_write_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0x10 ] 1
+        
+        #Inicializa as variaveis
         set i 0
 		set temp 0
+
+        # Enquanto i < 5000
         while {$i < 5000} {
+            # Le o registrador do transmissor 3
             set temp [ expr [ master_read_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0x14 ] 1 ]]
             incr i
         }
+
         if {[expr $temp == 2]} {
+            # Marca o transmissor 3 como testado
             set ::ctrlPIO::LVDSTest3 1
+             #Escreve no log e no .txt
             ::ctrlPIO::writeText {TESTE LVDS = par LVDS 3 OK!}
+             #Muda a cor do led no dashboard
             dashboard_set_property ${::ctrlPIO::dash_path} con2LED color "green"
         } else {
+             #Marca o transmissor 3 como testado e com ERRO
             set ::ctrlPIO::LVDSTest3 2
+             #Escreve no log e no .txt
             ::ctrlPIO::writeText {TESTE LVDS = par LVDS 3 com erro!}
+            #Muda a cor do led no dashboard
             dashboard_set_property ${::ctrlPIO::dash_path} con2LED color "red"
         } 
+        #  #Escreve no log e no .txt
         ::ctrlPIO::writeText {TESTE LVDS = encerrado}
+        # Desliga o transmissor 1
         master_write_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0 ] 0
+        # Desliga o transmissor 2
         master_write_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0x8 ] 0
+        # Desliga o transmisor 3
         master_write_32 ${::boardInit::masterPath} [ expr ${::QSYS_HEADER::MASTER_0_RJ45_TESTER_0_BASE} + 0x10 ] 0
-		::ctrlPIO::controlButtons 1
-
+		# Habilita os controles
+        ::ctrlPIO::controlButtons 1
+        # Retorna OK para quem chamou
         return -code ok
 
     }
