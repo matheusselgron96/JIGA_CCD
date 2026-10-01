@@ -134,14 +134,26 @@ architecture serdes_rtl of rjtester is
   signal rx2_frame_ok_int  : std_logic; -- link 2: frame recebido sem erro
   signal rx2_frame_err_int : std_logic; -- link 2: frame recebido com erro
 
-  signal clear_clk0 : std_logic := '0'; -- clear para os links 0 e 1 (ambos em clk0_0)
-  signal clear_clk2 : std_logic := '0'; -- clear para o link 2 (clk2_0)
+  signal clear_sync0_clk0_reg : std_logic := '0';
+  signal clear_sync1_clk0_reg : std_logic := '0';
+  signal clear_sync2_clk0_reg : std_logic := '0';
+  signal clear_sync0_clk2_reg : std_logic := '0';
+  signal clear_sync1_clk2_reg : std_logic := '0';
+  signal clear_sync2_clk2_reg : std_logic := '0';
+  signal clear_clk0 : std_logic; -- clear para os links 0 e 1 (ambos em clk0_0)
+  signal clear_clk2 : std_logic; -- clear para o link 2 (clk2_0)
+
+  signal clear_req_next, clear_req_reg         : std_logic := '0';
+  signal clear_toggle_reg : std_logic := '0';
   
 
 begin
 
   clk1_0  <= clk0_0;
   clk1_90 <= clk0_90;
+  -- Pulso de clear em cada dominio: 1 ciclo quando o toggle sincronizado muda
+  clear_clk0 <= clear_sync1_clk0_reg xor clear_sync2_clk0_reg;
+  clear_clk2 <= clear_sync1_clk2_reg xor clear_sync2_clk2_reg;
 
   FRAMEGEN_0 : entity work.framegen
     generic map (
@@ -319,17 +331,24 @@ begin
 
 
     -- Avalon-MM register bank + status capture (sysclk domain)
-  process(sysclk, rst_n)
+ process(sysclk, rst_n)
   begin
     if rst_n = '0' then
-      tx0_enable_reg <= '0';
-      tx1_enable_reg <= '0';
-      tx2_enable_reg <= '0';
+      tx0_enable_reg   <= '0';
+      tx1_enable_reg   <= '0';
+      tx2_enable_reg   <= '0';
+      clear_req_reg    <= '0';
+      clear_toggle_reg <= '0';
     elsif rising_edge(sysclk) then
       avmm_readdata_reg     <= avmm_readdata_next;
       tx0_enable_reg        <= tx0_enable_next;
       tx1_enable_reg        <= tx1_enable_next;
       tx2_enable_reg        <= tx2_enable_next;
+      clear_req_reg         <= clear_req_next;
+      -- Cada pedido de clear inverte o toggle (pulso -> mudanca de nivel)
+      if clear_req_reg = '1' then
+        clear_toggle_reg <= not clear_toggle_reg;
+      end if;
       -- CDC link -> sysclk (1 register: all clocks share the same PLL)
       rx0_status_sysclk_reg <= rx0_status_int;
       rx1_status_sysclk_reg <= rx1_status_int;
@@ -337,11 +356,15 @@ begin
     end if;
   end process;
 
-  -- CDC sysclk -> clk0 (link 0 enable)
+ -- CDC sysclk -> clk0 (link 0 enable + toggle de clear)
   process(clk0_0)
   begin
     if rising_edge(clk0_0) then
-      tx0_enable_clk0_reg <= tx0_enable_reg;
+      tx0_enable_clk0_reg  <= tx0_enable_reg;
+      -- sincronizador de 2 registros + atraso para detectar a borda
+      clear_sync0_clk0_reg <= clear_toggle_reg;
+      clear_sync1_clk0_reg <= clear_sync0_clk0_reg;
+      clear_sync2_clk0_reg <= clear_sync1_clk0_reg;
     end if;
   end process;
 
@@ -353,11 +376,14 @@ begin
     end if;
   end process;
 
-  -- CDC sysclk -> clk2 (link 2 enable)
-  process(clk2_0)
+process(clk2_0)
   begin
     if rising_edge(clk2_0) then
-      tx2_enable_clk2_reg <= tx2_enable_reg;
+      tx2_enable_clk2_reg  <= tx2_enable_reg;
+      -- sincronizador de 2 registros + atraso para detectar a borda
+      clear_sync0_clk2_reg <= clear_toggle_reg;
+      clear_sync1_clk2_reg <= clear_sync0_clk2_reg;
+      clear_sync2_clk2_reg <= clear_sync1_clk2_reg;
     end if;
   end process;
 
@@ -371,7 +397,7 @@ begin
       rx1_frames_ok_reg  <= (others => '0');
       rx1_frames_err_reg <= (others => '0');
     elsif rising_edge(clk0_0) then
-      if clear_clk2 = '1' then
+      if clear_clk0 = '1' then
         rx0_frames_ok_reg  <= (others => '0');
         rx0_frames_err_reg <= (others => '0');
         rx1_frames_ok_reg  <= (others => '0');
@@ -427,6 +453,7 @@ begin
     tx0_enable_next    <= tx0_enable_reg;
     tx1_enable_next    <= tx1_enable_reg;
     tx2_enable_next    <= tx2_enable_reg;
+    clear_req_next     <= '0';          -- pulso: so vale '1' no ciclo da escrita
     if avmm_read = '1' then
       case to_integer(unsigned(avmm_address)) is
         when 0 =>
@@ -467,6 +494,8 @@ begin
           tx1_enable_next <= avmm_writedata(0);
         when 4 =>
           tx2_enable_next <= avmm_writedata(0);
+        when 6 =>
+          clear_req_next <= avmm_writedata(0);  -- escrever 1 em +0x18 pede o clear
         when others =>
           null;
       end case;
