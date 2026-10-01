@@ -3,102 +3,109 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity rjtester is
+  -- Parametros do componente
   generic (
-    PERIOD_SYNC_US       : integer := 100;
-    LINK_0_FREQUENCY_MHZ : integer := 50;
-    LINK_0_NUM_BYTES     : integer := 500;
-    LINK_2_FREQUENCY_MHZ : integer := 20;
-    LINK_2_NUM_BYTES     : integer := 80
+    PERIOD_SYNC_US       : integer := 100; -- Periodo entre um pacote e outro
+    LINK_0_FREQUENCY_MHZ : integer := 50;  -- Frequencia em MHz do Link0 e Link1
+    LINK_0_NUM_BYTES     : integer := 500; -- Numero de Bytes do Link0 e Link1
+    LINK_2_FREQUENCY_MHZ : integer := 20;  -- Frequencia em MHz do Link2
+    LINK_2_NUM_BYTES     : integer := 80   -- Numero de Bytes do Link2
     );
   port (
-    rst_n : in std_logic;
+    rst_n : in std_logic; -- reset do componente (reset em zero)
 
     -- avmm
-    sysclk         : in  std_logic;
-    avmm_address   : in  std_logic_vector(3 downto 0);
-    avmm_write     : in  std_logic;
-    avmm_writedata : in  std_logic_vector(31 downto 0);
-    avmm_read      : in  std_logic;
-    avmm_readdata  : out std_logic_vector(31 downto 0);
+    sysclk         : in  std_logic; -- clock do sistema
+    avmm_address   : in  std_logic_vector(3 downto 0); -- Endereço do registrador
+    avmm_write     : in  std_logic; -- flag de escrita
+    avmm_writedata : in  std_logic_vector(31 downto 0); -- Dado escrito
+    avmm_read      : in  std_logic; -- flag de leitura
+    avmm_readdata  : out std_logic_vector(31 downto 0); -- Dado lido
 
-    -- Serial Pair 0
-    clk0_0       : in  std_logic;       -- clock from pll 0 degrees
-    clk0_90      : in  std_logic;       -- clock from pll 90 degrees
-    tx0_serial_o : out std_logic;       -- rj45A_connector tx0
-    rx0_serial_i : in  std_logic;       -- rj45B_connector rx0
-    -- Serial Pair 1
-    tx1_serial_o : out std_logic;       -- rj45B_connector tx1
-    rx1_serial_i : in  std_logic;       -- rj45A_connector rx1
-    -- Serial Pair 2
-    clk2_0       : in  std_logic;       -- clock from pll 0 degrees
-    clk2_90      : in  std_logic;       -- clock from pll 90 degrees
-    tx2_serial_o : out std_logic;       -- rj45A_connector tx2
-    rx2_serial_i : in  std_logic        -- rj45B_connector rx2
+    -- Par serial 0
+    clk0_0       : in  std_logic;       -- clock do PLL, fase de 0 graus
+    clk0_90      : in  std_logic;       -- clock do PLL, fase de 90 graus
+    tx0_serial_o : out std_logic;       -- conector RJ45 A, transmissão 0
+    rx0_serial_i : in  std_logic;       -- conector RJ45 B, recepção 0
+    -- Par serial 1
+    tx1_serial_o : out std_logic;       -- conector RJ45 B, transmissão 1
+    rx1_serial_i : in  std_logic;       -- conector RJ45 A, recepção 1
+    -- Par serial 2
+    clk2_0       : in  std_logic;       -- clock do PLL, fase de 0 graus
+    clk2_90      : in  std_logic;       -- clock do PLL, fase de 90 graus
+    tx2_serial_o : out std_logic;       -- conector RJ45 A, transmissão 2
+    rx2_serial_i : in  std_logic        -- conector RJ45 B, recepção 2
     );
 
 end entity rjtester;
 
 architecture serdes_rtl of rjtester is
 
+  -- Constantes do link 1
   constant LINK_1_FREQUENCY_MHZ : integer := LINK_0_FREQUENCY_MHZ;
   constant LINK_1_NUM_BYTES     : integer := LINK_0_NUM_BYTES;
 
-  -- component generics
+  -- Ciclos por período
   constant LINK_0_N_CYCLES : integer := PERIOD_SYNC_US * LINK_0_FREQUENCY_MHZ;
   constant LINK_1_N_CYCLES : integer := PERIOD_SYNC_US * LINK_1_FREQUENCY_MHZ;
   constant LINK_2_N_CYCLES : integer := PERIOD_SYNC_US * LINK_1_FREQUENCY_MHZ;
 
   -- component ports
-  signal tx0_avst_valid_int : std_logic;
-  signal tx0_avst_ready_int : std_logic;
-  signal tx0_avst_sop_int   : std_logic;
-  signal tx0_avst_eop_int   : std_logic;
-  signal tx0_avst_data_int  : std_logic_vector(7 downto 0);
+  signal tx0_avst_valid_int : std_logic; -- "tenho um byte pronto em data" | framegen --> ser
+  signal tx0_avst_ready_int : std_logic; -- "posso receber um byte agora"  | ser --> framegen
+  signal tx0_avst_sop_int   : std_logic; -- "este byte é o primeiro do pacote" | framegen --> ser
+  signal tx0_avst_eop_int   : std_logic; --  "este byte é o último do pacote" | framegen --> ser
+  signal tx0_avst_data_int  : std_logic_vector(7 downto 0); --  o byte em si, 8 bits | framegen --> ser
 
-  signal rx0_status_int     : std_logic;
-  signal rx0_avst_valid_int : std_logic;
-  signal rx0_avst_ready_int : std_logic;
+  signal rx0_avst_valid_int : std_logic;  
+  signal rx0_avst_ready_int : std_logic;  
   signal rx0_avst_sop_int   : std_logic;
   signal rx0_avst_eop_int   : std_logic;
   signal rx0_avst_data_int  : std_logic_vector(7 downto 0);
-  signal rx0_sync_int       : std_logic;
+   signal rx0_status_int     : std_logic;  -- saída status_o
+  signal rx0_sync_int       : std_logic; -- usado na simulação
 
+  -- Sinal 1
   signal tx1_avst_valid_int : std_logic;
   signal tx1_avst_ready_int : std_logic;
   signal tx1_avst_sop_int   : std_logic;
   signal tx1_avst_eop_int   : std_logic;
   signal tx1_avst_data_int  : std_logic_vector(7 downto 0);
 
-  signal rx1_status_int     : std_logic;
   signal rx1_avst_valid_int : std_logic;
   signal rx1_avst_ready_int : std_logic;
   signal rx1_avst_sop_int   : std_logic;
   signal rx1_avst_eop_int   : std_logic;
   signal rx1_avst_data_int  : std_logic_vector(7 downto 0);
+  signal rx1_status_int     : std_logic;
   signal rx1_sync_int       : std_logic;
 
+  -- Sinal 2
   signal tx2_avst_valid_int : std_logic;
   signal tx2_avst_ready_int : std_logic;
   signal tx2_avst_sop_int   : std_logic;
   signal tx2_avst_eop_int   : std_logic;
   signal tx2_avst_data_int  : std_logic_vector(7 downto 0);
 
-  signal rx2_status_int     : std_logic;
   signal rx2_avst_valid_int : std_logic;
   signal rx2_avst_ready_int : std_logic;
   signal rx2_avst_sop_int   : std_logic;
   signal rx2_avst_eop_int   : std_logic;
   signal rx2_avst_data_int  : std_logic_vector(7 downto 0);
   signal rx2_sync_int       : std_logic;
+  signal rx2_status_int     : std_logic;
 
+
+  -- Sinais dos registradores de enable dos canais --> Processador muda esses valores
   signal tx0_enable_next, tx0_enable_reg       : std_logic := '0';
   signal tx1_enable_next, tx1_enable_reg       : std_logic := '0';
   signal tx2_enable_next, tx2_enable_reg       : std_logic := '0';
-  signal avmm_readdata_next, avmm_readdata_reg : std_logic_vector(avmm_readdata'range);
+  -- Local que o processador lé o valor
+  signal avmm_readdata_next, avmm_readdata_reg : std_logic_vector(avmm_readdata'range); 
 
-  -- CDC using 1 register because all the clocks comes from the same source
-  -- So quartus will be able to ensure we aren't going to have meta stability
-  -- An additional register is required to make it easier meet the timming
+-- CDC usando 1 registrador porque todos os clocks vêm da mesma fonte.
+-- Assim, o Quartus consegue garantir que não teremos metaestabilidade.
+-- Um registrador adicional é necessário para facilitar o fechamento de timing.
   signal tx0_enable_clk0_reg   : std_logic := '0';
   signal tx1_enable_clk1_reg   : std_logic := '0';
   signal tx2_enable_clk2_reg   : std_logic := '0';
@@ -284,7 +291,8 @@ begin
       s_avst_data  => rx2_avst_data_int);
 
 
-  process(clk0_0, clk1_0, clk2_0, rst_n, sysclk)
+    -- Avalon-MM register bank + status capture (sysclk domain)
+  process(sysclk, rst_n)
   begin
     if rst_n = '0' then
       tx0_enable_reg <= '0';
@@ -295,16 +303,32 @@ begin
       tx0_enable_reg        <= tx0_enable_next;
       tx1_enable_reg        <= tx1_enable_next;
       tx2_enable_reg        <= tx2_enable_next;
+      -- CDC link -> sysclk (1 register: all clocks share the same PLL)
       rx0_status_sysclk_reg <= rx0_status_int;
       rx1_status_sysclk_reg <= rx1_status_int;
       rx2_status_sysclk_reg <= rx2_status_int;
     end if;
+  end process;
+
+  -- CDC sysclk -> clk0 (link 0 enable)
+  process(clk0_0)
+  begin
     if rising_edge(clk0_0) then
       tx0_enable_clk0_reg <= tx0_enable_reg;
     end if;
+  end process;
+
+  -- CDC sysclk -> clk1 (link 1 enable)
+  process(clk1_0)
+  begin
     if rising_edge(clk1_0) then
       tx1_enable_clk1_reg <= tx1_enable_reg;
     end if;
+  end process;
+
+  -- CDC sysclk -> clk2 (link 2 enable)
+  process(clk2_0)
+  begin
     if rising_edge(clk2_0) then
       tx2_enable_clk2_reg <= tx2_enable_reg;
     end if;
