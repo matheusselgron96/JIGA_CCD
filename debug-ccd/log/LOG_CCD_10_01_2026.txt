@@ -1,0 +1,149 @@
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (09:58:55 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (10:01:47 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LEDS = Ok!
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+TESTE SRAM = Escrita de dados na SRAM Finalizada
+TESTE SRAM = Iniciando Leitura de dados na SRAM
+TESTE SRAM = Leitura de dados na SRAM concluída
+TESTE SRAM = Iniciando Limpeza de dados na SRAM
+TESTE SRAM = Limpeza de dados na SRAM concluída
+TESTE SRAM = Leitura de dados na SRAM em branco
+TESTE SRAM = Leitura de dados na SRAM em branco concluída
+TESTE SRAM = Finalizado
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (10:12:29 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000100
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LEDS = Ok!
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+TESTE SRAM = Escrita de dados na SRAM Finalizada
+TESTE SRAM = Iniciando Leitura de dados na SRAM
+TESTE SRAM = Leitura de dados na SRAM concluída
+TESTE SRAM = Iniciando Limpeza de dados na SRAM
+TESTE SRAM = Limpeza de dados na SRAM concluída
+TESTE SRAM = Leitura de dados na SRAM em branco
+TESTE SRAM = Leitura de dados na SRAM em branco concluída
+TESTE SRAM = Finalizado
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (10:18:01 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LEDS = Ok!
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+TESTE SRAM = Escrita de dados na SRAM Finalizada
+TESTE SRAM = Iniciando Leitura de dados na SRAM
+TESTE SRAM = Leitura de dados na SRAM concluída
+TESTE SRAM = Iniciando Limpeza de dados na SRAM
+TESTE SRAM = Limpeza de dados na SRAM concluída
+TESTE SRAM = Leitura de dados na SRAM em branco
+TESTE SRAM = Leitura de dados na SRAM em branco concluída
+TESTE SRAM = Finalizado
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (10:22:45 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LEDS = Ok!
+TESTE SRAM = Iniciado
+TESTE SRAM = Iniciando Escrita de dados na SRAM
+TESTE SRAM = Escrita de dados na SRAM Finalizada
+TESTE SRAM = Iniciando Leitura de dados na SRAM
+TESTE SRAM = Leitura de dados na SRAM concluída
+TESTE SRAM = Iniciando Limpeza de dados na SRAM
+TESTE SRAM = Limpeza de dados na SRAM concluída
+TESTE SRAM = Leitura de dados na SRAM em branco
+TESTE SRAM = Leitura de dados na SRAM em branco concluída
+TESTE SRAM = Finalizado
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (10:41:42 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000100
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LEDS = Ok!
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (10:44:28 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
+**********************************START***************************************
+Estado Inicial da placa. Teste iniciado em (10:47:53 -- 10/01/2026)
+Status CCD Board: 
+Teste LEDS: 0, LEDs =  1111
+Teste SRAM: Write = 0, Read = 0, Erase = 0, CleanedRAM = 0
+Teste Switch: Status = 0, Switchs = 00000001
+Teste Switchs: started with error!!
+**********************************TESTES***************************************
+TESTE LVDS = Iniciando teste LVDS
+TESTE LVDS = par LVDS 1 OK!
+TESTE LVDS = par LVDS 2 OK!
+TESTE LVDS = par LVDS 3 OK!
+TESTE LVDS = encerrado
