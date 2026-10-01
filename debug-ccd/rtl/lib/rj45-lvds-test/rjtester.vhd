@@ -121,7 +121,13 @@ architecture serdes_rtl of rjtester is
   signal rx0_status_sysclk_reg : std_logic;
   signal rx1_status_sysclk_reg : std_logic;
   signal rx2_status_sysclk_reg : std_logic;
-
+  signal rx0_frames_ok_sysclk_reg  : unsigned(31 downto 0) := (others => '0');
+  signal rx0_frames_err_sysclk_reg : unsigned(31 downto 0) := (others => '0');
+  signal rx1_frames_ok_sysclk_reg  : unsigned(31 downto 0) := (others => '0');
+  signal rx1_frames_err_sysclk_reg : unsigned(31 downto 0) := (others => '0');
+  signal rx2_frames_ok_sysclk_reg  : unsigned(31 downto 0) := (others => '0');
+  signal rx2_frames_err_sysclk_reg : unsigned(31 downto 0) := (others => '0');
+  
   -- link 1 will use the same clock as link 0
   signal clk1_0  : std_logic;           -- clock from pll 0 degrees
   signal clk1_90 : std_logic;           -- clock from pll 90 degrees
@@ -145,6 +151,7 @@ architecture serdes_rtl of rjtester is
 
   signal clear_req_next, clear_req_reg         : std_logic := '0';
   signal clear_toggle_reg : std_logic := '0';
+
   
 
 begin
@@ -330,8 +337,8 @@ begin
       s_avst_data  => rx2_avst_data_int);
 
 
-    -- Avalon-MM register bank + status capture (sysclk domain)
- process(sysclk, rst_n)
+ -- Avalon-MM register bank + status capture (sysclk domain)
+process(sysclk, rst_n)
   begin
     if rst_n = '0' then
       tx0_enable_reg   <= '0';
@@ -353,6 +360,13 @@ begin
       rx0_status_sysclk_reg <= rx0_status_int;
       rx1_status_sysclk_reg <= rx1_status_int;
       rx2_status_sysclk_reg <= rx2_status_int;
+      -- CDC link -> sysclk dos contadores (ver regra de uso na declaracao)
+      rx0_frames_ok_sysclk_reg  <= rx0_frames_ok_reg;
+      rx0_frames_err_sysclk_reg <= rx0_frames_err_reg;
+      rx1_frames_ok_sysclk_reg  <= rx1_frames_ok_reg;
+      rx1_frames_err_sysclk_reg <= rx1_frames_err_reg;
+      rx2_frames_ok_sysclk_reg  <= rx2_frames_ok_reg;
+      rx2_frames_err_sysclk_reg <= rx2_frames_err_reg;
     end if;
   end process;
 
